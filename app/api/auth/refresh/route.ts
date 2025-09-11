@@ -43,15 +43,7 @@ export async function GET(request: NextRequest) {
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)
-			return NextResponse.json(
-				{
-					error: error.message,
-					response: error.response?.data,
-				},
-				{
-					status: error.status,
-				}
-			)
+			return NextResponse.redirect(new URL("/sign-in", request.url))
 		}
 		logErrorResponse({ message: (error as Error).message })
 		return NextResponse.json(

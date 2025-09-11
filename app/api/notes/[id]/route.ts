@@ -12,12 +12,12 @@ export async function GET(request: NextRequest, { params }: Props) {
 	try {
 		const cookieStore = await cookies()
 		const { id } = await params
-		const { data } = await api.get(`notes/${id}`, {
+		const response = await api.get(`/notes/${id}`, {
 			headers: {
 				Cookie: cookieStore.toString(),
 			},
 		})
-		return NextResponse.json(data)
+		return NextResponse.json(response.data, { status: response.status })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)
@@ -43,12 +43,12 @@ export async function DELETE(request: NextRequest, { params }: Props) {
 	try {
 		const cookieStore = await cookies()
 		const { id } = await params
-		const { data } = await api.delete(`notes/${id}`, {
+		const response = await api.delete(`/notes/${id}`, {
 			headers: {
 				Cookie: cookieStore.toString(),
 			},
 		})
-		return NextResponse.json(data)
+		return NextResponse.json(response.data, { status: response.data })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)
@@ -75,12 +75,12 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 		const cookieStore = await cookies()
 		const { id } = await params
 		const body = await request.json()
-		const { data } = await api.patch(`notes/${id}`, body, {
+		const response = await api.patch(`/notes/${id}`, body, {
 			headers: {
 				Cookie: cookieStore.toString(),
 			},
 		})
-		return NextResponse.json(data)
+		return NextResponse.json(response.data, { status: response.status })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)

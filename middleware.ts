@@ -47,6 +47,7 @@ export async function middleware(request: NextRequest) {
 						},
 					})
 				}
+				return NextResponse.next()
 			}
 		}
 		if (isPublicRoute) {
@@ -55,6 +56,8 @@ export async function middleware(request: NextRequest) {
 		if (isPrivateRoute) {
 			return NextResponse.redirect(new URL("/sign-in", request.url))
 		}
+
+		return NextResponse.next()
 	}
 	if (isPublicRoute) {
 		return NextResponse.redirect(new URL("/", request.url))
@@ -69,11 +72,11 @@ export async function middleware(request: NextRequest) {
 export const config = {
 	matcher: [
 		"/profile",
-		"/profile/:path",
+		"/profile/:path*",
 		"/notes",
-		"/notes/:path",
-		"/notes/action/:action",
-		"/notes/filter/:filter",
+		"/notes/:path*",
+		"/notes/action/:action*",
+		"/notes/filter/:filter*",
 		"/sign-in",
 		"/sign-up",
 	],

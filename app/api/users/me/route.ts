@@ -9,12 +9,12 @@ export const dynamic = "force-dynamic"
 export async function GET() {
 	try {
 		const cookieStore = await cookies()
-		const { data } = await api.get("users/me", {
+		const response = await api.get("/users/me", {
 			headers: {
 				Cookie: cookieStore.toString(),
 			},
 		})
-		return NextResponse.json(data)
+		return NextResponse.json(response.data, { status: response.status })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)
@@ -39,13 +39,13 @@ export async function GET() {
 export async function PATCH(request: NextRequest) {
 	try {
 		const cookieStore = await cookies()
-		const formData = await request.json()
-		const { data } = await api.patch("users/me", formData, {
+		const body = await request.json()
+		const response = await api.patch("/users/me", body, {
 			headers: {
 				Cookie: cookieStore.toString(),
 			},
 		})
-		return NextResponse.json(data)
+		return NextResponse.json(response.data, { status: response.status })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)

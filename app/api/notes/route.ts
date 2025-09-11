@@ -4,15 +4,25 @@ import { cookies } from "next/headers"
 import { isAxiosError } from "axios"
 import { logErrorResponse } from "../_utils/utils"
 
-export async function GET() {
+export async function GET(request: NextRequest) {
 	try {
 		const cookieStore = await cookies()
-		const { data } = await api.get("notes", {
+		const search = request.nextUrl.searchParams.get("search") ?? ""
+		const page = Number(request.nextUrl.searchParams.get("page") ?? 1)
+		const rawTag = request.nextUrl.searchParams.get("tag") ?? ""
+		const tag = rawTag === "All" ? "" : rawTag
+		const response = await api.get("notes", {
+			params: {
+				...(search !== "" && { search }),
+				page,
+				perPage: 12,
+				...(tag && { tag }),
+			},
 			headers: {
 				Cookie: cookieStore.toString(),
 			},
 		})
-		return NextResponse.json(data)
+		return NextResponse.json(response.data, { status: response.status })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)
@@ -36,9 +46,15 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
 	try {
-		const body = request.json()
-		const { data } = await api.post("notes", body)
-		return NextResponse.json(data)
+		const cookieStore = await cookies()
+		const body = await request.json()
+		const response = await api.post("notes", body, {
+			headers: {
+				Cookie: cookieStore.toString(),
+				"Content-Type": "application/json",
+			},
+		})
+		return NextResponse.json(response.data, { status: response.status })
 	} catch (error) {
 		if (isAxiosError(error)) {
 			logErrorResponse(error.response?.data)
